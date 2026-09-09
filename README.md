@@ -21,3 +21,4 @@ You no longer need to interact with the Python console! Everything is controlled
    * **F9** to toggle the Memory Patch (Seed Fixer) before applying an online seed.
 ## 📜 License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+[![Download Latest Release](https://img.shields.io/github/v/release/toesmax/IsaacOnlineSeedFixer-By-Offline2Online?label=DOWNLOAD%20LATEST%20RELEASE&style=for-the-badge&color=success)](https://github.com/toesmax/IsaacOnlineSeedFixer-By-Offline2Online/releases/latest)
