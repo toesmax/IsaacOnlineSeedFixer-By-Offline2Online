@@ -22,3 +22,7 @@ You no longer need to interact with the Python console! Everything is controlled
 ## 📜 License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 [![Download Latest Release](https://img.shields.io/github/v/release/toesmax/IsaacOnlineSeedFixer-By-Offline2Online?label=DOWNLOAD%20LATEST%20RELEASE&style=for-the-badge&color=success)](https://github.com/toesmax/IsaacOnlineSeedFixer-By-Offline2Online/releases/latest)
+
+---
+### 📥 [CLICK HERE TO DOWNLOAD THE LATEST .EXE](https://github.com/toesmax/IsaacOnlineSeedFixer-By-Offline2Online/releases/latest) 📥
+---
