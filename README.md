@@ -1,38 +1,23 @@
-# Isaac Online Seed Fixer
-
-A standalone memory patching utility for **The Binding of Isaac: Repentance** that forces custom seeds in online multiplayer lobbies without disconnecting players. Built as a companion tool for the *Offline2Online_Sync* Lua mod.
-
-## 🚀 The Problem
-Isaac's native netcode strictly prohibits custom seeds in online co-op. If `isSeededRun` is set to `true` (1), the lobby manager forcefully disconnects all peers. If it's forced to `false` (0) via memory patching, the game treats it as a standard run and forcefully overwrites the seed with a randomized one during `Game::Restart` and map generation.
-
+# Isaac Online Fixer & Cloud Sync
+A standalone companion utility for **The Binding of Isaac: Repentance** that enables **6-Digit Cloud Syncing** and forces custom seeds in online multiplayer lobbies without disconnecting players. Built specifically for the *Offline2Online_Sync* Lua mod.
+## 🚀 The Problems
+1. **The Seed Problem:** Isaac's native netcode strictly prohibits custom seeds in online co-op. If `isSeededRun` is set to `true`, the lobby manager forcefully disconnects all peers. If forced to `false` via memory patching, the game overwrites the seed with a randomized one during map generation.
+2. **The Cloud Problem:** Isaac's standard Lua engine restricts filesystem access and lacks native HTTP request capabilities, making it impossible to share run states seamlessly over the internet without manually sending `.dat` files to friends.
 ## 🧠 The Solution (How it works)
-This tool acts as an external memory injector using pure Python (`ctypes`). 
+This tool acts as a local server and external memory injector using pure Python (`ctypes` and `urllib`). It constantly tails Isaac's `log.txt` to receive IPC (Inter-Process Communication) commands sent by the Lua mod via `Isaac.DebugString()`.
 It performs the following tasks dynamically:
-1. **ASLR Bypass**: Resolves the dynamic Base Address of `isaac-ng.exe` using `CreateToolhelp32Snapshot` to bypass Windows Address Space Layout Randomization (ASLR).
-2. **Netcode Patch**: Patches the internal `ExecuteCommand` validation to push `0x00` instead of `0x01` into the `isSeededRun` flag, keeping the netcode alive.
+1. **Dual-Layer Cloud Sync:** When uploading a run, the Python script reads the local save file and POSTs it to a secure pastebin (`dpaste`). It then generates a **6-digit numeric PIN** and links the payload URL to a secondary Key-Value database. This allows players to download massive save files using just a 6-digit code in-game!
+2. **ASLR Bypass**: Resolves the dynamic Base Address of `isaac-ng.exe` using `CreateToolhelp32Snapshot` to bypass Windows Address Space Layout Randomization.
 3. **Trampoline Hooking**: Injects a custom Codecave (x86 Assembly) into the game's core RNG setter (`FUN_009eb880`).
-4. **Seed Hijacking**: When the user inputs a seed, the Hook intercepts `Game::Restart`'s initialization, saves the user's custom seed into a secret memory vault, and then automatically forces all subsequent Lobby Manager randomizers to use the saved seed instead of random ones.
-
+4. **Seed Hijacking & Auto-Detach**: It intercepts `Game::Restart`, saves the user's custom seed into a secret memory vault, and forces all Lobby Manager randomizers to use it. Once the map is fully loaded, the script receives an IPC command from Lua to automatically detach the hook and restore normal game behavior.
 ## 📥 Usage (For Players)
-1. Launch *The Binding of Isaac: Repentance* and create your Online Lobby.
-2. Run `IsaacOnlineSeedFixer_EN.exe`.
-3. Press **F1** to enable the memory hook (you will hear a beep).
-4. Apply your seed in-game (e.g., via the *Offline2Online_Sync* mod by pressing F8).
-5. Once the run starts and the map is fully loaded, press **F2** to detach the hook and restore normal game behavior.
-
-## 🛠️ Build Instructions (For Developers)
-The script relies entirely on the Python Standard Library. No external dependencies (like `pywin32` or `pymem`) are required!
-
-1. Install Python 3.10+
-2. Install PyInstaller:
-   ```cmd
-   pip install pyinstaller
-   ```
-3. Compile the executable:
-   ```cmd
-   python -m PyInstaller --onefile fixer.py
-   ```
-4. The standalone `.exe` will be generated inside the `dist/` folder.
-
+You no longer need to interact with the Python console! Everything is controlled directly inside Isaac.
+1. Launch *The Binding of Isaac: Repentance*.
+2. Run `IsaacOnlineFixer_CloudSync.exe` in the background and keep it minimized.
+3. Open the *Offline2Online_Sync* mod menu in-game by pressing **F5** (in the starting room).
+4. Use the in-game keys to interact with the Fixer:
+   * **F10** to Upload your run to the Cloud and get a 6-digit PIN.
+   * **F4** to Download a friend's run by typing their 6-digit PIN.
+   * **F9** to toggle the Memory Patch (Seed Fixer) before applying an online seed.
 ## 📜 License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
